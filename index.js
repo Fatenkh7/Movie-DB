@@ -46,11 +46,7 @@ app.get("/search", (req, res) => {
 });
 
 //movies
-// function list() {
-//   movies.map((element) => {
-//     console.log(element.title);
-//   });
-// }
+
 //create movies
 app.get("/movies/create", (req, res) => {
   res.status(200).json({ message: "done" });
