@@ -67,6 +67,30 @@ app.get("/movies/read", (req, res) => {
   res.status(200).json({ data: movies });
 });
 
+//read by date
+app.get("/movies/read/by-date", (req, res) => {
+  const moviesByDate = movies.sort((a, b) => a.year - b.year);
+  res.status(200).json({ data: moviesByDate });
+});
+
+//read by rating
+app.get("/movies/read/by-rating", (req, res) => {
+  const moviesByRate = movies.sort((a, b) => a.rating - b.rating);
+  res.status(200).json({ data: moviesByRate });
+});
+
+//read by title
+app.get("/movies/read/by-title", (req, res) => {
+  const moviesByTitle = movies.sort((a, b) => {
+    let A = a.title.toLowerCase();
+    let B = b.title.toLowerCase();
+    if (A < B) return -1;
+    if (A > B) return 1;
+    return 0;
+  });
+  res.status(200).json({ data: moviesByTitle });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
