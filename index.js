@@ -63,8 +63,20 @@ app.get("/movies/delete", (req, res) => {
 });
 
 //read movies
-app.get("/movies/read", (req, res) => {
-  res.status(200).json({ data: movies });
+app.get("/movies/read/id/:ID", (req, res) => {
+  movies.find((movie) => {
+    var id = req.params.ID;
+    if (id > movie.length || id == 0 || id == "undifined") {
+      res.status(404).json({
+        error: true,
+        message: `the movie ${req.params.ID} does not exist`,
+      });
+    } else {
+      res
+        .status(200)
+        .json({ message: "Your movie ", data: movies[req.params.ID - 1] });
+    }
+  });
 });
 
 //read by date
