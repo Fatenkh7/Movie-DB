@@ -76,9 +76,44 @@ app.get("/movies/create/title=:TITLE&year=:YEAR&rating=:RATING", (req, res) => {
 });
 
 //edit movies
-app.get("/movies/edit", (req, res) => {
-  res.status(200).json({ message: "done" });
-});
+app.get(
+  "/movies/edit/:ID/title=:NEW_TITLE&year=:NEW_YEAR&rating=:NEW_RATING",
+  (req, res) => {
+    let updateMovie = {
+      title: req.params.NEW_TITLE,
+      year: req.params.NEW_YEAR,
+      rating: parseInt(req.params.NEW_RATING),
+    };
+    movies.find((movie) => {
+      var id = req.params.ID;
+      if (id > movie.length || id == 0 || id == "undifined") {
+        res.status(404).json({
+          error: true,
+          message: `the movie ${req.params.ID} does not exist`,
+        });
+      }
+      if (req.params.NEW_YEAR.length !== 4) {
+        res.status(403).json({
+          error: true,
+          message: "you cannot update the year",
+        });
+      } else if (
+        req.params.NEW_TITLE === null ||
+        req.params.NEW_RATING === null ||
+        req.params.NEW_YEAR === null
+      ) {
+        res.status(200).json({
+          data: movies[req.params.ID - 1],
+          message: "done",
+        });
+      } else {
+        movies.splice(movies.title).push(req.params.NEW_TITLE);
+        movies.splice(movies.rating).push(req.params.NEW_RATING);
+        res.status(200).json({ message: "done", data: updateMovie });
+      }
+    });
+  }
+);
 
 //delete movies
 app.get("/movies/delete/:ID", (req, res) => {
