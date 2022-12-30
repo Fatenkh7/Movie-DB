@@ -55,21 +55,15 @@ app.get("/movies/create/title=:TITLE&year=:YEAR&rating=:RATING", (req, res) => {
     rating: parseInt(req.params.RATING),
   };
   if (typeof req.params.YEAR == "undefiend" || req.params.YEAR.length !== 4) {
-    res
-      .status(403)
-      .json({
-        error: true,
-        message:
-          "you cannot create a movie without providing a title and a year",
-      });
+    res.status(403).json({
+      error: true,
+      message: "you cannot create a movie without providing a title and a year",
+    });
   } else if (typeof req.params.TITLE == "undefined") {
-    res
-      .status(403)
-      .json({
-        error: true,
-        message:
-          "you cannot create a movie without providing a title and a year",
-      });
+    res.status(403).json({
+      error: true,
+      message: "you cannot create a movie without providing a title and a year",
+    });
   } else if (
     req.params.RATING == null ||
     req.params.RATING != parseInt(req.params.RATING)
@@ -87,8 +81,25 @@ app.get("/movies/edit", (req, res) => {
 });
 
 //delete movies
-app.get("/movies/delete", (req, res) => {
-  res.status(200).json({ message: "done" });
+app.get("/movies/delete/:ID", (req, res) => {
+  movies.find((movie) => {
+    var deleteMovie = req.params.ID;
+    // let newList !== movies[req.params.ID];
+    if (deleteMovie > movie.length || deleteMovie == "undifined") {
+      res.status(404).json({
+        error: true,
+        message: `the movie ${deleteMovie} does not exist`,
+      });
+    } else if (deleteMovie) {
+      movies.splice(req.params.ID - 1, 1);
+      // newLi = movies.splice(deleteMovie, 1);
+      // var newm = movies.splice(deleteMovie);
+      res.status(200).json({
+        message: "Your new list of movies ",
+        data: movies,
+      });
+    }
+  });
 });
 
 //read movies
