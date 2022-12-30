@@ -48,35 +48,40 @@ app.get("/search", (req, res) => {
 //movies
 
 //create movies
-app.get("/movies/create/title=:TITLE&year=:YEAR&rating=:RATING", (req, res) => {
-  let newMovie = {
-    title: req.params.TITLE,
-    year: req.params.YEAR,
-    rating: parseInt(req.params.RATING),
-  };
-  if (typeof req.params.YEAR == "undefiend" || req.params.YEAR.length !== 4) {
-    res.status(403).json({
-      error: true,
-      message: "you cannot create a movie without providing a title and a year",
-    });
-  } else if (typeof req.params.TITLE == "undefined") {
-    res.status(403).json({
-      error: true,
-      message: "you cannot create a movie without providing a title and a year",
-    });
-  } else if (
-    req.params.RATING == null ||
-    req.params.RATING != parseInt(req.params.RATING)
-  ) {
-    req.params.RATING = 4;
-  } else {
-    movies.push(newMovie);
-    res.status(200).json({ message: "done", data: newMovie });
+app.post(
+  "/movies/create/title=:TITLE&year=:YEAR&rating=:RATING",
+  (req, res) => {
+    let newMovie = {
+      title: req.params.TITLE,
+      year: req.params.YEAR,
+      rating: parseInt(req.params.RATING),
+    };
+    if (typeof req.params.YEAR == "undefiend" || req.params.YEAR.length !== 4) {
+      res.status(404).json({
+        error: true,
+        message:
+          "you cannot create a movie without providing a title and a year",
+      });
+    } else if (typeof req.params.TITLE == "undefined") {
+      res.status(404).json({
+        error: true,
+        message:
+          "you cannot create a movie without providing a title and a year",
+      });
+    } else if (
+      req.params.RATING == null ||
+      req.params.RATING != parseInt(req.params.RATING)
+    ) {
+      req.params.RATING = 4;
+    } else {
+      movies.push(newMovie);
+      res.status(200).json({ message: "done", data: newMovie });
+    }
   }
-});
+);
 
 //edit movies
-app.get(
+app.put(
   "/movies/edit/:ID/title=:NEW_TITLE&year=:NEW_YEAR&rating=:NEW_RATING",
   (req, res) => {
     let updateMovie = {
@@ -116,7 +121,7 @@ app.get(
 );
 
 //delete movies
-app.get("/movies/delete/:ID", (req, res) => {
+app.delete("/movies/delete/:ID", (req, res) => {
   movies.find((movie) => {
     var deleteMovie = req.params.ID;
     // let newList !== movies[req.params.ID];
