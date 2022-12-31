@@ -1,13 +1,21 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+require("./database").connect();
 const port = 3000;
+app.use(bodyParser.json());
+
+//import Routes
+const moviesRoutes = require("./routes/movies.js");
+app.use("/movies", moviesRoutes);
+
 const movies = [
   { title: "Jaws", year: 1975, rating: 8 },
   { title: "Avatar", year: 2009, rating: 7.8 },
   { title: "Brazil", year: 1985, rating: 8 },
   { title: "الإرهاب والكباب‎", year: 1992, rating: 6.2 },
 ];
-
 app.get("/", (req, res) => {
   res.send("ok");
 });
@@ -44,145 +52,6 @@ app.get("/search", (req, res) => {
     res.send({ status: 200, message: "ok", data: req.query.s });
   }
 });
-
-//movies
-
-//create movies
-app.post(
-  "/movies/create/title=:TITLE&year=:YEAR&rating=:RATING",
-  (req, res) => {
-    let newMovie = {
-      title: req.params.TITLE,
-      year: req.params.YEAR,
-      rating: parseInt(req.params.RATING),
-    };
-    if (typeof req.params.YEAR == "undefiend" || req.params.YEAR.length !== 4) {
-      res.status(404).json({
-        error: true,
-        message:
-          "you cannot create a movie without providing a title and a year",
-      });
-    } else if (typeof req.params.TITLE == "undefined") {
-      res.status(404).json({
-        error: true,
-        message:
-          "you cannot create a movie without providing a title and a year",
-      });
-    } else if (
-      req.params.RATING == null ||
-      req.params.RATING != parseInt(req.params.RATING)
-    ) {
-      req.params.RATING = 4;
-    } else {
-      movies.push(newMovie);
-      res.status(200).json({ message: "done", data: newMovie });
-    }
-  }
-);
-
-//edit movies
-app.put(
-  "/movies/edit/:ID/title=:NEW_TITLE&year=:NEW_YEAR&rating=:NEW_RATING",
-  (req, res) => {
-    let updateMovie = {
-      title: req.params.NEW_TITLE,
-      year: req.params.NEW_YEAR,
-      rating: parseInt(req.params.NEW_RATING),
-    };
-    movies.find((movie) => {
-      var id = req.params.ID;
-      if (id > movie.length || id == 0 || id == "undifined") {
-        res.status(404).json({
-          error: true,
-          message: `the movie ${req.params.ID} does not exist`,
-        });
-      }
-      if (req.params.NEW_YEAR.length !== 4) {
-        res.status(403).json({
-          error: true,
-          message: "you cannot update the year",
-        });
-      } else if (
-        req.params.NEW_TITLE === null ||
-        req.params.NEW_RATING === null ||
-        req.params.NEW_YEAR === null
-      ) {
-        res.status(200).json({
-          data: movies[req.params.ID - 1],
-          message: "done",
-        });
-      } else {
-        movies.splice(movies.title).push(req.params.NEW_TITLE);
-        movies.splice(movies.rating).push(req.params.NEW_RATING);
-        res.status(200).json({ message: "done", data: updateMovie });
-      }
-    });
-  }
-);
-
-//delete movies
-app.delete("/movies/delete/:ID", (req, res) => {
-  movies.find((movie) => {
-    var deleteMovie = req.params.ID;
-    // let newList !== movies[req.params.ID];
-    if (deleteMovie > movie.length || deleteMovie == "undifined") {
-      res.status(404).json({
-        error: true,
-        message: `the movie ${deleteMovie} does not exist`,
-      });
-    } else if (deleteMovie) {
-      movies.splice(req.params.ID - 1, 1);
-      // newLi = movies.splice(deleteMovie, 1);
-      // var newm = movies.splice(deleteMovie);
-      res.status(200).json({
-        message: "Your new list of movies ",
-        data: movies,
-      });
-    }
-  });
-});
-
-//read movies
-app.get("/movies/read/id/:ID", (req, res) => {
-  movies.find((movie) => {
-    var id = req.params.ID;
-    if (id > movie.length || id == 0 || id == "undifined") {
-      res.status(404).json({
-        error: true,
-        message: `the movie ${req.params.ID} does not exist`,
-      });
-    } else {
-      res
-        .status(200)
-        .json({ message: "Your movie ", data: movies[req.params.ID - 1] });
-    }
-  });
-});
-
-//read by date
-app.get("/movies/read/by-date", (req, res) => {
-  const moviesByDate = movies.sort((a, b) => a.year - b.year);
-  res.status(200).json({ data: moviesByDate });
-});
-
-//read by rating
-app.get("/movies/read/by-rating", (req, res) => {
-  const moviesByRate = movies.sort((a, b) => a.rating - b.rating);
-  res.status(200).json({ data: moviesByRate });
-});
-
-//read by title
-app.get("/movies/read/by-title", (req, res) => {
-  const moviesByTitle = movies.sort((a, b) => {
-    let A = a.title.toLowerCase();
-    let B = b.title.toLowerCase();
-    if (A < B) return -1;
-    if (A > B) return 1;
-    return 0;
-  });
-  res.status(200).json({ data: moviesByTitle });
-});
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
