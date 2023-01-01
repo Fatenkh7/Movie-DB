@@ -4,11 +4,6 @@ const User = require("../models/User");
 
 //get users
 router.get("/", async (req, res) => {
-  let password = req.body.password;
-  if (password) {
-    encryptedPassword = await bcrypt.hash(password, 15);
-    update.password = encryptedPassword;
-  }
   try {
     const users = await User.find();
     res.status(200).json({ data: users });
@@ -24,11 +19,6 @@ router.post("/", async (req, res) => {
     password: req.body.password,
   });
   try {
-    let password = req.body.password;
-    if (password) {
-      encryptedPassword = await bcrypt.hash(password, 15);
-      update.password = encryptedPassword;
-    }
     const savedUser = await user.save();
     res.status(200).json({ data: savedUser });
   } catch (err) {
@@ -41,11 +31,6 @@ router.patch("/:USERNAME", async (req, res) => {
   try {
     let filter = { username: req.params.USERNAME };
     let update = req.body;
-    let password = req.body.password;
-    if (password) {
-      encryptedPassword = await bcrypt.hash(password, 15);
-      update.password = encryptedPassword;
-    }
     const updateUser = await User.findOneAndUpdate(filter, update, {
       new: true,
     });
