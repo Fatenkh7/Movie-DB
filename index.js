@@ -1,21 +1,21 @@
 const express = require("express");
 const app = express();
-const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 require("./database").connect();
 const port = 3000;
 app.use(bodyParser.json());
 
-//import Routes
+// import MOVIES Routes
 const moviesRoutes = require("./routes/movies.js");
-app.use("/movies", moviesRoutes);
+// import USERS Routes
+const usersRoutes = require("./routes/users.js");
 
-const movies = [
-  { title: "Jaws", year: 1975, rating: 8 },
-  { title: "Avatar", year: 2009, rating: 7.8 },
-  { title: "Brazil", year: 1985, rating: 8 },
-  { title: "الإرهاب والكباب‎", year: 1992, rating: 6.2 },
-];
+//Route movies Middlewares
+app.use("/movies", moviesRoutes);
+//Route users Middlewares
+app.use("/users", usersRoutes);
+
+//testing..
 app.get("/", (req, res) => {
   res.send("ok");
 });
@@ -52,6 +52,7 @@ app.get("/search", (req, res) => {
     res.send({ status: 200, message: "ok", data: req.query.s });
   }
 });
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
